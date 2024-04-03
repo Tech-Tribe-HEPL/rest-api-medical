@@ -1,0 +1,6 @@
+# Api flask is a lightweight web application framework this lib support openapi for documentation
+apiflask
+gunicorn
+requests
+# Proposition for oauth support -> https://docs.authlib.org/en/latest/basic/install.html
+Authlib
