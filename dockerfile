@@ -7,6 +7,12 @@ WORKDIR /app
 # Copy just the requirements file first to leverage Docker cache
 COPY requirements.txt /app
 
+# Download repo to make available packages
+RUN apt-get update
+
+# Install dependency for the lib interacting with postgresql
+RUN apt-get install -y libpq5
+
 # Install dependencies specified in requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 

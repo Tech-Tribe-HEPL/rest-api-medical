@@ -1,3 +1,10 @@
-# Api flask is a lightweight web application framework this lib support openapi for documentation
+# Api flask is a lightweight web application framework this lib support openapi for documentation -> https://apiflask.com/docs/
 apiflask
+#Gunicorn is a production http server add multithreading in pools -> https://gunicorn.org/
 gunicorn
+#The rest is library needed for the connector -> https://requests.readthedocs.io/en/latest/
+requests
+# Proposition for oauth support -> https://docs.authlib.org/en/latest/basic/install.html
+Authlib
+# Postgresql connector -> https://www.psycopg.org/psycopg3/docs
+psycopg
