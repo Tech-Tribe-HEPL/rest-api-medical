@@ -17,7 +17,12 @@
 				"ms-python.python",
 				"ms-python.debugpy",
 				"mtxr.sqltools",
-				"mongodb.mongodb-vscode"
+				"mongodb.mongodb-vscode",
+				"WaseemAkram.jinja-snippets-flask",
+				"cstrap.flask-snippets",
+				"frhtylcn.pythonsnippets",
+				"KevinRose.vsc-python-indent",
+				"wholroyd.jinja"
 			]
 		}
 	}
