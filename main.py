@@ -9,11 +9,12 @@ app = APIFlask(__name__, title='Medical API', version='1.0')
 
 @app.get('/medical')
 def index():
+    # TODO: Check if this method is vulnerable to SQL Injection
+    user_uuid = "1234567890" # TODO: Extract from JWT token
     conn.cursor().execute("""
-                        SELECT medicaltreatement.MedicalTreatmentUniqueId,medicaltreatment.Description,doctor.name
-                        FROM medicaltreatment 
-                        JOIN doctor ON medicaltreatment.LeadDoctor = doctor.InamiNumber
-                        """)
+                        SELECT * FROM medicaltreatment 
+                        WHERE citizen = '%s';
+                        """, (user_uuid))
     content = conn.cursor().fetchall()
     flask.jsonify(content)
     return flask.jsonify(content)
@@ -29,10 +30,12 @@ def post_medical():
 
 @app.get('/medical/<int:id>')
 def get_medical(id):
+    #get the content from the database /!\ SQL Injection
+    id = flask.request.args.get('id')
     conn.cursor().execute("""
-                        SELECT * FROM medicaltreatment 
-                        WHERE Citizen = '1234567890';
-                        """)
+                        SELECT * FROM medicaltreatment
+                        WHERE id = %s AND citizen = '%s';
+                        """, (id, user_uuid))
     #get the content from cursor in json format
     content = conn.cursor().fetchall()
     #parse the content into 
