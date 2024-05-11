@@ -38,7 +38,7 @@ def get_db_connection():
 def create_app(config_filename):
     app = APIFlask(__name__, title='Medical API', version='1.0')
     CORS(app)
-    @app.get('/medical')
+    @app.get('/')
     def index():
         conn = get_db_connection
         # TODO: Check if this method is vulnerable to SQL Injection
@@ -56,7 +56,7 @@ def create_app(config_filename):
         flask.jsonify(content)
         return flask.jsonify(content)
 
-    @app.post('/medical')
+    @app.post('/')
     def post_medical():
         conn = get_db_connection
         conn.cursor().execute("""
@@ -67,7 +67,7 @@ def create_app(config_filename):
         conn.close()
         return '201 - Medical treatment created'
 
-    @app.get('/medical/<int:id>')
+    @app.get('/<int:id>')
     def get_medical(id):
         #get the content from the database /!\ SQL Injection
         id = flask.request.args.get('id')
