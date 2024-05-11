@@ -84,13 +84,6 @@ def create_app(config_filename):
         #parse the content into
         return flask.jsonify(content)
 
-    @app.errorhandler(404)
-    def not_found(error):
-        # This function will handle 404 errors
-        # display the full path in the response 
-        return flask.jsonify(flask.request.full_path)
-    return app
-
 
 app = create_app(__name__)
 
