@@ -7,19 +7,33 @@ import flask
 import psycopg
 import os
 
+class DatabaseConnection:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.connect()
+        return cls._instance
+
+    def connect(self):
+        # Extract from environment variable information to connect to the database
+        pg_user = os.getenv('POSTGRES_USER', 'postgres')
+        pg_password = os.getenv('POSTGRES_PASSWORD', 'postgres')
+        pg_host = os.getenv('POSTGRES_HOST', 'localhost')
+        pg_port = os.getenv('POSTGRES_PORT', '5432')
+        pg_db = os.getenv('POSTGRES_DB', 'test')
+        # Display a Warning if the default values are used
+        if pg_user == 'postgres' or pg_password == 'postgres' or pg_host == 'localhost' or pg_port == '5432' or pg_db == 'test':
+            print('Warning: Using default values for database connection')
+        # Connect to the database
+        self.conn = psycopg.connect()
+    
+    def get_connection(self):
+        return self.conn
+
 def get_db_connection():
-    # Extract from envionnement variable information to connect to the database
-    pg_user = os.getenv('POSTGRES_USER', 'postgres')
-    pg_password = os.getenv('POSTGRES_PASSWORD', 'postgres')
-    pg_host = os.getenv('POSTGRES_HOST', 'localhost')
-    pg_port = os.getenv('POSTGRES_PORT', '5432')
-    pg_db = os.getenv('POSTGRES_DB', 'test')
-    #Display a Warning if the default values are used
-    if pg_user == 'postgres' or pg_password == 'postgres' or pg_host == 'localhost' or pg_port == '5432' or pg_db == 'test':
-        print('Warning: Using default values for database connection')
-    # Connect to the database
-    with psycopg.connect() as conn:
-        return conn
+    return DatabaseConnection().get_connection()
 
 def create_app(config_filename):
     app = APIFlask(__name__, title='Medical API', version='1.0')
