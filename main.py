@@ -35,57 +35,54 @@ class DatabaseConnection:
 def get_db_connection():
     return DatabaseConnection().get_connection()
 
-def create_app(config_filename):
-    app = APIFlask(__name__, title='Medical API', version='1.0')
-    CORS(app)
-    @app.get('/')
-    def index():
-        conn = get_db_connection
-        # TODO: Check if this method is vulnerable to SQL Injection
-        user_uuid = "1234567890" # TODO: Extract from JWT token
-        
-        # Obtain get_db_connection
-        conn = get_db_connection
-        conn.cursor().execute("""
-                                SELECT * FROM medicaltreatment 
-                                WHERE citizen = '%s';
-                                """, (user_uuid))
-        content = conn.cursor().fetchall()
-        conn.close()
-        
-        flask.jsonify(content)
-        return flask.jsonify(content)
 
-    @app.post('/')
-    def post_medical():
-        conn = get_db_connection
-        conn.cursor().execute("""
-                                INSERT INTO medicaltreatment (MedicalTreatmentUniqueId, Description, Citizen, LeadDoctor)
-                                VALUES ('1','test','1234567890','1234567890');
-                                """)
-        conn.commit()
-        conn.close()
-        return '201 - Medical treatment created'
+app = APIFlask(__name__, title='Medical API', version='1.0')
+CORS(app)
+@app.get('/')
+def index():
+    conn = get_db_connection
+    # TODO: Check if this method is vulnerable to SQL Injection
+    user_uuid = "1234567890" # TODO: Extract from JWT token
+    
+    # Obtain get_db_connection
+    conn = get_db_connection
+    conn.cursor().execute("""
+                            SELECT * FROM medicaltreatment 
+                            WHERE citizen = '%s';
+                            """, (user_uuid))
+    content = conn.cursor().fetchall()
+    conn.close()
+    
+    flask.jsonify(content)
+    return flask.jsonify(content)
 
-    @app.get('/<int:id>')
-    def get_medical(id):
-        #get the content from the database /!\ SQL Injection
-        id = flask.request.args.get('id')
-        # Obtain get_db_connection
-        conn = get_db_connection
-        
-        conn.cursor().execute("""
-                                SELECT * FROM medicaltreatment
-                                WHERE id = %s AND citizen = '%s';
-                                """, (id, user_uuid))
-        #get the content from cursor in json format
-        content = conn.cursor().fetchall()
-        conn.close()
-        #parse the content into
-        return flask.jsonify(content)
+@app.post('/')
+def post_medical():
+    conn = get_db_connection
+    conn.cursor().execute("""
+                            INSERT INTO medicaltreatment (MedicalTreatmentUniqueId, Description, Citizen, LeadDoctor)
+                            VALUES ('1','test','1234567890','1234567890');
+                            """)
+    conn.commit()
+    conn.close()
+    return '201 - Medical treatment created'
 
-
-app = create_app(__name__)
+@app.get('/<int:id>')
+def get_medical(id):
+    #get the content from the database /!\ SQL Injection
+    id = flask.request.args.get('id')
+    # Obtain get_db_connection
+    conn = get_db_connection
+    
+    conn.cursor().execute("""
+                            SELECT * FROM medicaltreatment
+                            WHERE id = %s AND citizen = '%s';
+                            """, (id, user_uuid))
+    #get the content from cursor in json format
+    content = conn.cursor().fetchall()
+    conn.close()
+    #parse the content into
+    return flask.jsonify(content)
 
 if __name__ == "__main__":
     app.run(debug=True)
