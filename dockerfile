@@ -24,4 +24,4 @@ EXPOSE 5000
 # Run main.py when the container launches
 CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "main:app"]
 # Run the debug server
-# CMD ["flask","--app","/app/main.py", "run"]
+# CMD ["flask","--app","/app/main.py", "run", "--debug"]

@@ -29,6 +29,7 @@ class DatabaseConnection:
         # Display a Warning if the default values are used
         if pg_user == 'postgres' and pg_password == 'postgres' and pg_host == 'localhost' and pg_port == '5432' and pg_db == 'test':
              app.logger.info('Warning: Using default values for database connection')
+            
         # Connect to the database
         app.logger.info(f'Connecting to database {pg_db} on {pg_host}:{pg_port} as {pg_user}')
         #Based on key values present there  https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-KEYWORD-VALUE
@@ -40,7 +41,6 @@ class DatabaseConnection:
             dbname=pg_db
         )
         
-    
     def get_connection(self):
         return self.conn
 
@@ -56,14 +56,15 @@ def create_app():
     def index():
         conn = db.get_connection()
         # TODO: Check if this method is vulnerable to SQL Injection
-        user_uuid = "1234567890" # TODO: Extract from JWT token
-        conn.cursor().execute("""
+        user_uuid = "123456789012" # TODO: Extract from JWT token
+        cur = conn.cursor()
+        cur.execute("""
                                 SELECT * FROM medicaltreatment 
-                                WHERE citizen = '%s';
+                                WHERE citizen = (%s);
                                 """, (user_uuid,))
-        content = conn.cursor().fetchall()
+        content = cur.fetchall()
         conn.close()
-
+        
         flask.jsonify(content)
         return flask.jsonify(content)
 
@@ -82,7 +83,7 @@ def create_app():
     def get_medical(id):
         #get the content from the database /!\ SQL Injection
         id = flask.request.args.get('id')
-        # Obtain get_connection
+        #Obtain get_connection
         conn = db.get_connection()
 
         conn.cursor().execute("""
