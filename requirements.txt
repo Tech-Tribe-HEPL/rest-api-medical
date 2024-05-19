@@ -12,5 +12,3 @@ requests
 Authlib
 # Postgresql connector -> https://www.psycopg.org/psycopg3/docs
 psycopg
-# MongoDb connector -> https://pymongo.readthedocs.io/en/stable/
-pymongo
