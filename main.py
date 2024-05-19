@@ -59,13 +59,17 @@ def create_app():
         user_uuid = "123456789012" # TODO: Extract from JWT token
         cur = conn.cursor()
         cur.execute("""
-                                SELECT * FROM medicaltreatment 
-                                WHERE citizen = (%s);
-                                """, (user_uuid,))
-        content = cur.fetchall()
-        conn.close()
+            SELECT * FROM medicaltreatment 
+            WHERE citizen = %s;
+        """, (user_uuid,))
+        rows = cur.fetchall()
+        column_names = [desc[0] for desc in cur.description]
         
-        flask.jsonify(content)
+        # Construct a list of dictionaries
+        content = []
+        for row in rows:
+            content.append(dict(zip(column_names, row)))
+        
         return flask.jsonify(content)
 
     @app.post('/')
@@ -92,7 +96,6 @@ def create_app():
                                 """, (id, user_uuid))
         #get the content from cursor in json format
         content = conn.cursor().fetchall()
-        conn.close()
         #parse the content into
         return flask.jsonify(content)
 
