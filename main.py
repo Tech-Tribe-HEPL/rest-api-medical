@@ -72,31 +72,49 @@ def create_app():
         
         return flask.jsonify(content)
 
+    #TODO This route should be secured more deeply with a JWT token -> To be seen in the api gateway
+    #TODO add a check if the doctor exist and return error accordingly
     @app.post('/')
     def post_medical():
         conn = db.get_connection()
         conn.cursor().execute("""
-                                INSERT INTO medicaltreatment (MedicalTreatmentUniqueId, Description, Citizen, LeadDoctor)
-                                VALUES ('1','test','1234567890','1234567890');
-                                """)
+                                INSERT INTO medicaltreatment (Description, Citizen, LeadDoctor,startdate)
+                                VALUES ('%s','%s','%s','%s','%s');
+                                """, (flask.request.json['Description'], flask.request.json['Citizen'], flask.request.json['LeadDoctor'],flask.request.json['startdate']))
         conn.commit()
         conn.close()
         return '201 - Medical treatment created'
 
+    #This is a full access of a folder: it should be logged in the system
     @app.get('/<int:id>')
     def get_medical(id):
         #get the content from the database /!\ SQL Injection
         id = flask.request.args.get('id')
+        #extracted from the JWT token by kong
+        user_uuid = "123456789012"
         #Obtain get_connection
         conn = db.get_connection()
-
-        conn.cursor().execute("""
+        curr = conn.cursor()
+        curr.execute("""
                                 SELECT * FROM medicaltreatment
                                 WHERE id = %s AND citizen = '%s';
                                 """, (id, user_uuid))
         #get the content from cursor in json format
-        content = conn.cursor().fetchall()
-        #parse the content into
+        rows = cur.fetchall()
+        column_names = [desc[0] for desc in cur.description]
+        
+        # Construct a list of dictionaries
+        content = []
+        for row in rows:
+            content.append(dict(zip(column_names, row)))
+        
+        #Log in the db the access using an insert
+        conn.cursor().execute("""
+                                INSERT INTO accesslog (MedicalTreatmentUniqueId, Citizen, AccessDate)
+                                VALUES ('%s','%s',CURRENT_TIMESTAMP);
+                                """,(id, user_uuid))
+        #The postgresql instance generate the timestamp
+        conn.commit()
         return flask.jsonify(content)
 
     return app
