@@ -1,5 +1,6 @@
 # Api flask is a lightweight web application framework this lib support openapi for documentation -> https://apiflask.com/docs/
 apiflask
+apiflask[yaml]
 flask
 flask_cors
 #Gunicorn is a production http server add multithreading in pools -> https://gunicorn.org/

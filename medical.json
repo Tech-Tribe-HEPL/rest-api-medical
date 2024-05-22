@@ -1,0 +1,184 @@
+{
+  "components": {
+    "schemas": {
+      "HTTPError": {
+        "properties": {
+          "detail": {
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MedicalTreatmentIn": {
+        "properties": {
+          "Citizen": {
+            "type": "string"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "LeadDoctor": {
+            "type": "string"
+          },
+          "startdate": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MedicalTreatmentOut": {
+        "properties": {
+          "Citizen": {
+            "type": "string"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "LeadDoctor": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "startdate": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "detail": {
+            "properties": {
+              "<location>": {
+                "properties": {
+                  "<field_name>": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Medical API",
+    "version": "1.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/": {
+      "get": {
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MedicalTreatmentOut"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Index"
+      },
+      "post": {
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedicalTreatmentIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            },
+            "description": "Validation error"
+          }
+        },
+        "summary": "Post Medical"
+      }
+    },
+    "/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicalTreatmentOut"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError"
+                }
+              }
+            },
+            "description": "Not found"
+          }
+        },
+        "summary": "Get Medical"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://10.1.1.3:5000/"
+    }
+  ],
+  "tags": []
+}
